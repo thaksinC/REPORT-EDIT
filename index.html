@@ -690,7 +690,7 @@
     </div>
   </div>
 </div>
-  <script>
+<script>
 // เปลี่ยน URL นี้เป็น URL Web App ของคุณที่ได้จากการ Deploy
 const GAS_URL = "https://script.google.com/a/macros/sing.ac.th/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec";
 
@@ -767,7 +767,38 @@ let regStream = null;
 let regPhotoIndex = 0;
 
 const PHOTO_GUIDES = ['กรุณาหันหน้าตรงแล้วกดถ่ายรูป', 'กรุณาหันซ้ายประมาณ 45° แล้วกดถ่ายรูป', 'กรุณาหันขวาประมาณ 45° แล้วกดถ่ายรูป'];
+// ===== โค้ดเชื่อมต่อ GitHub เข้ากับ GAS (วางเพิ่ม) =====
+const GAS_URL = "https://script.google.com/a/macros/sing.ac.th/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec";
 
+window.google = {
+  script: {
+    run: new Proxy({}, {
+      get(target, prop) {
+        if (prop === 'withSuccessHandler') {
+          return (cb) => { target.success = cb; return window.google.script.run; };
+        }
+        if (prop === 'withFailureHandler') {
+          return (cb) => { target.failure = cb; return window.google.script.run; };
+        }
+        return async (...args) => {
+          try {
+            const resp = await fetch(GAS_URL, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({ functionName: prop, args: args })
+            });
+            const data = await resp.json();
+            if (target.success) target.success(data);
+          } catch (e) {
+            console.error("GAS Error:", e);
+            if (target.failure) target.failure(e);
+          }
+        };
+      }
+    })
+  }
+};
+// ===============================================
 // ===== UTILS =====
 function showLoading(msg) {
   document.getElementById('loadingText').textContent = msg || 'กำลังประมวลผล กรุณารอสักครู่...';
