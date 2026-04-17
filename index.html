@@ -522,7 +522,7 @@
     <div class="report-table-wrap">
       <table class="report-table" id="reportTable">
         <thead><tr><th>#</th><th>ประเภท</th><th>เรื่อง</th><th>วันที่อบรม</th><th></th></tr></thead>
-        <tbody id="reportTableBody"><tr><td colspan="5"><div class="empty-state"><span>⏳</span>กำลังโหลดข้อมูล...</div></td></tr></tbody>
+        <tbody id="reportTableBody"><tr><td colspan="5"><div class="empty-state"><span>⏳</span>กำลังโหลดข้อมูล...</div></td></table></tbody>
       </table>
     </div>
   </div>
@@ -622,31 +622,36 @@
 // ==================== CONFIGURATION ====================
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
 
-// ==================== HELPER: CALL GAS ====================
-async function callGAS(action, data = {}) {
-  showLoading('กำลังดำเนินการ...');
-  try {
-    const payload = { action: action, data: data };
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    });
+// ==================== HELPER: CALL GAS (ใช้ JSONP แทน Fetch) ====================
+function callGAS(action, data = {}) {
+  return new Promise((resolve, reject) => {
+    showLoading('กำลังดำเนินการ...');
     
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    const callbackName = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    const payload = JSON.stringify({ action: action, data: data });
+    const encodedPayload = encodeURIComponent(payload);
     
-    const result = await response.json();
-    hideLoading();
-    return result;
-  } catch (error) {
+    window[callbackName] = function(result) {
+      delete window[callbackName];
+      document.body.removeChild(script);
+      hideLoading();
+      resolve(result);
+    };
+    
+    const script = document.createElement('script');
+    script.src = GAS_URL + '?callback=' + callbackName + '&data=' + encodedPayload;
+    script.onerror = function() {
+      delete window[callbackName];
+      document.body.removeChild(script);
+      hideLoading();
+      reject(new Error('เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว'));
+    };
+    document.body.appendChild(script);
+  }).catch(error => {
     hideLoading();
     console.error('callGAS error:', error);
     return { success: false, message: 'เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว: ' + error.message };
-  }
+  });
 }
 
 // ===== STATE =====
