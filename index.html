@@ -28,6 +28,7 @@
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family: 'Sarabun', sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); }
 
+    /* ========== TOP BAR ========== */
     .topbar {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
       padding: 0 32px; height: 64px;
@@ -43,9 +44,11 @@
     .btn-logout { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.2s; }
     .btn-logout:hover { background: rgba(255,255,255,0.25); }
 
+    /* ========== PAGES ========== */
     .page { display: none; }
     .page.active { display: block; }
 
+    /* ========== LOGIN PAGE ========== */
     .login-wrap {
       min-height: calc(100vh - 64px);
       display: flex; align-items: center; justify-content: center;
@@ -64,6 +67,7 @@
     .login-logo h1 { font-size: 18px; font-weight: 700; color: var(--primary); margin-top: 14px; line-height: 1.4; }
     .login-logo p { font-size: 13px; color: #999; margin-top: 5px; }
 
+    /* ===== iOS-style Toggle ===== */
     .login-toggle-wrap { display: flex; background: #f0fdfa; border: 2px solid var(--border); border-radius: 14px; padding: 4px; margin-bottom: 28px; gap: 4px; }
     .toggle-btn {
       flex: 1; padding: 10px 8px; border: none; border-radius: 10px;
@@ -78,6 +82,7 @@
     }
     .toggle-btn .tb-icon { font-size: 16px; }
 
+    /* ===== Login Method Panels ===== */
     .login-panel { display: none; }
     .login-panel.active { display: block; }
 
@@ -100,8 +105,9 @@
     .btn-login:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(15,118,110,0.4); }
     .login-error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-top: 16px; display: none; }
 
+    /* ===== FACE LOGIN PANEL ===== */
     .face-status-bar {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: center;
       background: #f0fdfa; border: 1px solid var(--border);
       border-radius: 10px; padding: 10px 16px; margin-bottom: 14px; font-size: 13px;
     }
@@ -139,6 +145,7 @@
     }
     .btn-register-face:hover { background: var(--bg); border-color: var(--primary-light); }
 
+    /* ===== FACE LOGIN RESULT POPUP ===== */
     .face-result-popup {
       display: none; position: absolute; top: 50%; left: 50%;
       transform: translate(-50%,-50%);
@@ -170,6 +177,7 @@
     .btn-cancel-face:hover { background: #f5f5f5; }
     .face-result-popup-wrap { position: relative; }
 
+    /* model loading indicator */
     .model-loading-bar {
       background: #f0fdfa; border: 1px solid var(--border);
       border-radius: 10px; padding: 12px 16px;
@@ -180,6 +188,7 @@
     .model-loading-bar .mbar-inner { height: 100%; background: linear-gradient(90deg, var(--primary), var(--primary-light)); border-radius: 2px; animation: mbarAnim 1.5s ease-in-out infinite; }
     @keyframes mbarAnim { 0%{width:0%} 50%{width:70%} 100%{width:100%} }
 
+    /* ==================== REGISTRATION MODAL ==================== */
     .reg-backdrop {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.65); z-index: 8000;
@@ -220,6 +229,7 @@
     .reg-step { display: none; }
     .reg-step.active { display: block; }
 
+    /* Camera capture section */
     .reg-camera-wrap { position: relative; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 4/3; margin-bottom: 14px; border: 3px solid var(--border); }
     #regVideo { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); display: block; }
     .reg-guide-text { text-align: center; font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 10px; background: #f0fdfa; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; }
@@ -267,6 +277,7 @@
     .photo-instructions { background: #f8fffe; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; font-size: 13px; color: #555; line-height: 1.7; }
     .photo-instructions strong { color: var(--primary); }
 
+    /* ========== HISTORY PAGE ========== */
     .history-wrap { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
     .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
     .history-title { font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
@@ -288,6 +299,7 @@
     .empty-state { padding: 60px 20px; text-align: center; color: #999; }
     .empty-state span { font-size: 48px; display: block; margin-bottom: 16px; }
 
+    /* ========== EDIT FORM PAGE ========== */
     .edit-wrap { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
     .edit-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
     .btn-back { display: inline-flex; align-items: center; gap: 8px; background: white; border: 2px solid var(--border); color: var(--primary); padding: 10px 20px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; }
@@ -320,11 +332,13 @@
     .btn-cancel { background: white; border: 2px solid #e0e0e0; color: #666; padding: 13px 28px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; }
     .btn-cancel:hover { border-color: #bbb; background: #f5f5f5; }
 
+    /* ========== LOADING ========== */
     .loading-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
     .loading-overlay.active { display: flex; }
     .loading-overlay img { width: 120px; height: 120px; }
     .loading-text { color: white; margin-top: 20px; font-size: 17px; font-weight: 500; }
 
+    /* ========== RESULT MODAL ========== */
     .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9998; justify-content: center; align-items: center; padding: 20px; }
     .modal-backdrop.active { display: flex; }
     .modal-card { background: white; border-radius: 24px; box-shadow: var(--shadow-lg); padding: 44px 40px; max-width: 480px; width: 100%; text-align: center; border-top: 5px solid var(--primary); }
@@ -348,11 +362,13 @@
 </head>
 <body>
 
+<!-- LOADING OVERLAY -->
 <div class="loading-overlay" id="loadingOverlay">
   <img src="https://img2.pic.in.th/pic/Untitled-designa252d1a12dd2af5b.gif" alt="Loading...">
   <div class="loading-text" id="loadingText">กำลังประมวลผล กรุณารอสักครู่...</div>
 </div>
 
+<!-- RESULT MODAL -->
 <div class="modal-backdrop" id="resultModal">
   <div class="modal-card">
     <div class="modal-icon">✅</div>
@@ -367,10 +383,13 @@
   </div>
 </div>
 
+<!-- REGISTRATION MODAL -->
 <div class="reg-backdrop" id="regBackdrop">
   <div class="reg-modal">
     <h2>📷 ลงทะเบียน Facial Login</h2>
     <p class="reg-sub">ยืนยันตัวตนเพื่อเริ่มลงทะเบียนใบหน้า</p>
+
+    <!-- Step 1: Verify -->
     <div class="reg-step active" id="regStep1">
       <div class="reg-error" id="regError1"></div>
       <div class="reg-field">
@@ -381,15 +400,21 @@
         <label>เบอร์โทรศัพท์</label>
         <input type="text" id="regPhone" maxlength="20" placeholder="กรอกเบอร์โทรศัพท์" inputmode="tel">
       </div>
-      <button class="btn-capture" onclick="verifyRegistration()" id="btnVerifyReg">✅ ตรวจสอบข้อมูล</button>
+      <button class="btn-capture" onclick="verifyRegistration()" id="btnVerifyReg">
+        ✅ ตรวจสอบข้อมูล
+      </button>
       <button class="btn-reg-cancel" onclick="closeRegistration()">ยกเลิก</button>
     </div>
+
+    <!-- Step 2: Already registered or confirm -->
     <div class="reg-step" id="regStep2">
       <div class="reg-name-banner">
         <div class="rn-label">ท่านกำลังลงทะเบียนใบหน้าในนามของ</div>
         <div class="rn-name" id="regUserName"></div>
       </div>
-      <div class="reg-already-msg" id="regAlreadyMsg" style="display:none;">⚠️ ท่านเคยลงทะเบียนแล้ว แต่ประสบปัญหาด้วย Facial Login<br>กรุณาลองใหม่ภายหลัง และท่านสามารถใช้การล็อกอินแบบปกติได้</div>
+      <div class="reg-already-msg" id="regAlreadyMsg" style="display:none;">
+        ⚠️ ท่านเคยลงทะเบียนแล้ว แต่ประสบปัญหาด้วย Facial Login<br>กรุณาลองใหม่ภายหลัง และท่านสามารถใช้การล็อกอินแบบปกติได้
+      </div>
       <div id="regProceedSection">
         <div class="photo-instructions">
           <strong>📋 ขั้นตอนการลงทะเบียนใบหน้า</strong><br>
@@ -398,10 +423,14 @@
           📸 รูปที่ 2 — <strong>หันซ้าย 45°</strong><br>
           📸 รูปที่ 3 — <strong>หันขวา 45°</strong>
         </div>
-        <button class="btn-capture" onclick="startRegistrationCamera()" id="btnStartRegCamera">📷 เริ่มถ่ายรูปลงทะเบียน</button>
+        <button class="btn-capture" onclick="startRegistrationCamera()" id="btnStartRegCamera">
+          📷 เริ่มถ่ายรูปลงทะเบียน
+        </button>
       </div>
       <button class="btn-reg-cancel" onclick="closeRegistration()">ยกเลิก</button>
     </div>
+
+    <!-- Step 3: Camera + capture -->
     <div class="reg-step" id="regStep3">
       <div class="reg-name-banner" style="margin-bottom:14px;">
         <div class="rn-label">ลงทะเบียนในนามของ</div>
@@ -418,10 +447,16 @@
         <div class="reg-photo-slot" id="regSlot2"><span class="slot-label">หันขวา</span></div>
       </div>
       <div class="reg-error" id="regError3"></div>
-      <button class="btn-capture" onclick="captureRegPhoto()" id="btnCapture">📷 ถ่ายรูป</button>
-      <button class="btn-reg-confirm" onclick="confirmRegistration()" id="btnRegConfirm" disabled>✅ ยืนยันการลงทะเบียน</button>
+      <button class="btn-capture" onclick="captureRegPhoto()" id="btnCapture">
+        📷 ถ่ายรูป
+      </button>
+      <button class="btn-reg-confirm" onclick="confirmRegistration()" id="btnRegConfirm" disabled>
+        ✅ ยืนยันการลงทะเบียน
+      </button>
       <button class="btn-reg-cancel" onclick="closeRegistration()">ยกเลิก</button>
     </div>
+
+    <!-- Step 4: Processing -->
     <div class="reg-step" id="regStep4">
       <div style="text-align:center;padding:30px 0;">
         <div style="font-size:52px;margin-bottom:16px;">⚙️</div>
@@ -432,6 +467,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Step 5: Done -->
     <div class="reg-step" id="regStep5">
       <div style="text-align:center;padding:20px 0;">
         <div style="font-size:52px;margin-bottom:14px;">✅</div>
@@ -443,6 +480,7 @@
   </div>
 </div>
 
+<!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-brand">
     <img src="https://lh3.googleusercontent.com/d/19nmqbu_16Fn55BvuTfW6cmzZm5ad1kRe" alt="Logo">
@@ -454,6 +492,7 @@
   </div>
 </div>
 
+<!-- ====== PAGE: LOGIN ====== -->
 <div class="page active" id="pageLogin">
   <div class="login-wrap">
     <div class="login-card">
@@ -462,10 +501,18 @@
         <h1>ระบบแก้ไขรายงาน<br>การไปราชการ / อบรม / ศึกษาดูงาน</h1>
         <p>โรงเรียนสิงห์บุรี</p>
       </div>
+
+      <!-- iOS Toggle -->
       <div class="login-toggle-wrap">
-        <button class="toggle-btn active" id="toggle-id" onclick="switchLoginMode('id')"><span class="tb-icon">🔢</span> เลข13หลัก</button>
-        <button class="toggle-btn" id="toggle-face" onclick="switchLoginMode('face')"><span class="tb-icon">👤</span> Facial Login</button>
+        <button class="toggle-btn active" id="toggle-id" onclick="switchLoginMode('id')">
+          <span class="tb-icon">🔢</span> เลข13หลัก
+        </button>
+        <button class="toggle-btn" id="toggle-face" onclick="switchLoginMode('face')">
+          <span class="tb-icon">👤</span> Facial Login
+        </button>
       </div>
+
+      <!-- Panel 1: ID/Phone -->
       <div class="login-panel active" id="panel-id">
         <div class="login-field">
           <label>เลขประจำตัว 13 หลัก</label>
@@ -478,35 +525,43 @@
         <button class="btn-login" id="btnLogin" onclick="doLogin()">🔐 เข้าสู่ระบบ</button>
         <div class="login-error" id="loginError"></div>
       </div>
+
+      <!-- Panel 2: Facial Login -->
       <div class="login-panel" id="panel-face">
         <div class="model-loading-bar" id="modelLoadingBar">
           <div>⚙️ กำลังโหลดโมเดลจดจำใบหน้า...</div>
           <div class="mbar"><div class="mbar-inner"></div></div>
         </div>
+
         <div class="face-status-bar" id="faceStatusBar" style="display:none;">
-          <span class="face-status-text" id="faceStatusText">กรุณากระพริบตาเพื่อเริ่มสแกน</span>
+          <span class="face-status-text" id="faceStatusText">กรุณากระพริบตาเพื่อสแกนใบหน้า</span>
         </div>
+
         <div class="face-result-popup-wrap" style="position:relative;">
           <div class="face-video-wrap" id="faceVideoWrap" style="display:none;">
             <video id="faceVideo" autoplay playsinline muted></video>
             <canvas id="faceCanvas"></canvas>
             <div class="face-scan-ring" id="faceScanRing"></div>
-            <div class="face-overlay-msg" id="faceOverlayMsg">กรุณากระพริบตาเพื่อเริ่มสแกนตัวตน</div>
+            <div class="face-overlay-msg" id="faceOverlayMsg">กระพริบตาเพื่อเริ่มสแกน</div>
           </div>
           <div class="face-result-popup" id="faceResultPopup">
             <div style="font-size:40px;">👤</div>
             <div class="face-result-name" id="faceResultName"></div>
             <div class="face-result-sub">พบใบหน้าที่ตรงกันในระบบ</div>
-            <button class="btn-confirm-face" onclick="confirmFaceLogin()">✅ ยืนยันเข้าสู่ระบบ</button>
+            <button class="btn-confirm-face" onclick="confirmFaceLogin()">✅ ตกลง เข้าสู่ระบบ</button>
             <button class="btn-cancel-face" onclick="cancelFaceResult()">🔄 สแกนใหม่</button>
           </div>
         </div>
-        <button class="btn-register-face" onclick="openRegistration()">✏️ ลงทะเบียนใบหน้าเพื่อใช้ Facial Login</button>
+
+        <button class="btn-register-face" onclick="openRegistration()">
+          ✏️ ลงทะเบียนใบหน้าเพื่อใช้ Facial Login
+        </button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ====== PAGE: HISTORY LIST ====== -->
 <div class="page" id="pageHistory">
   <div class="history-wrap">
     <div class="history-header">
@@ -521,13 +576,20 @@
     <div id="alertHistory"></div>
     <div class="report-table-wrap">
       <table class="report-table" id="reportTable">
-        <thead><tr><th>#</th><th>ประเภท</th><th>เรื่อง</th><th>วันที่อบรม</th><th></th></tr></thead>
-        <tbody id="reportTableBody"><tr><td colspan="5"><div class="empty-state"><span>⏳</span>กำลังโหลดข้อมูล...</div></td></table></tbody>
+        <thead>
+          <tr>
+            <th>#</th><th>ประเภท</th><th>เรื่อง</th><th>วันที่อบรม</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="reportTableBody">
+          <tr><td colspan="5"><div class="empty-state"><span>⏳</span>กำลังโหลดข้อมูล...</div></td></tr>
+        </tbody>
       </table>
     </div>
   </div>
 </div>
 
+<!-- ====== PAGE: EDIT FORM ====== -->
 <div class="page" id="pageEdit">
   <div class="edit-wrap">
     <div class="edit-header">
@@ -619,41 +681,27 @@
 </div>
 
 <script>
-// ==================== CONFIGURATION ====================
+// ===== CONFIGURATION =====
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
 
-// ==================== HELPER: CALL GAS (JSONP - ไม่มี CORS) ====================
-function callGAS(action, data = {}) {
-  return new Promise((resolve, reject) => {
-    showLoading('กำลังดำเนินการ...');
-    
-    const callbackName = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
-    const payload = JSON.stringify({ action: action, data: data });
-    const encodedPayload = encodeURIComponent(payload);
-    
-    // สร้างฟังก์ชัน callback
-    window[callbackName] = function(result) {
-      delete window[callbackName];
-      document.body.removeChild(script);
-      hideLoading();
-      resolve(result);
-    };
-    
-    // สร้าง script tag สำหรับ JSONP
-    const script = document.createElement('script');
-    script.src = GAS_URL + '?callback=' + callbackName + '&data=' + encodedPayload;
-    script.onerror = function() {
-      delete window[callbackName];
-      document.body.removeChild(script);
-      hideLoading();
-      reject(new Error('เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว'));
-    };
-    document.body.appendChild(script);
-  }).catch(error => {
-    hideLoading();
-    console.error('callGAS error:', error);
-    return { success: false, message: 'เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว: ' + error.message };
+// ===== GAS API CALLER =====
+async function callGAS(functionName, ...args) {
+  const url = new URL(GAS_URL);
+  url.searchParams.set('action', functionName);
+  
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    mode: 'cors',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ args: JSON.stringify(args) })
   });
+  
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(text);
+  }
 }
 
 // ===== STATE =====
@@ -664,13 +712,17 @@ let savedPdfLinks = {};
 let existingFiles = {};
 let dropdownsLoaded = false;
 
+// Face login state
 let faceVideoStream = null;
 let faceModelsLoaded = false;
 let faceDetectionInterval = null;
-let blinkDetected = false;
+let blinkCount = 0;
+let blinkReady = false;
 let pendingFaceName = null;
 let eyeWasClosed = false;
+const MODELS_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
 
+// Registration state
 let regUserRow = null;
 let regUserName = '';
 let regPhotos = [];
@@ -680,6 +732,7 @@ let regPhotoIndex = 0;
 
 const PHOTO_GUIDES = ['กรุณาหันหน้าตรงแล้วกดถ่ายรูป', 'กรุณาหันซ้ายประมาณ 45° แล้วกดถ่ายรูป', 'กรุณาหันขวาประมาณ 45° แล้วกดถ่ายรูป'];
 
+// ===== UTILS =====
 function showLoading(msg) {
   document.getElementById('loadingText').textContent = msg || 'กำลังประมวลผล กรุณารอสักครู่...';
   document.getElementById('loadingOverlay').classList.add('active');
@@ -691,11 +744,13 @@ function showPage(id) {
   window.scrollTo(0,0);
 }
 
+// ===== LOGIN MODE SWITCH =====
 function switchLoginMode(mode) {
   document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.login-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('toggle-' + mode).classList.add('active');
   document.getElementById('panel-' + mode).classList.add('active');
+
   if (mode === 'face') {
     initFaceLogin();
   } else {
@@ -703,13 +758,13 @@ function switchLoginMode(mode) {
   }
 }
 
+// ===== FACE-API MODEL LOADING =====
 async function loadFaceModels() {
   if (faceModelsLoaded) return true;
   try {
-    const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
-    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-    await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODEL_URL);
-    await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODELS_URL);
+    await faceapi.nets.faceLandmark68TinyNet.loadFromUri(MODELS_URL);
+    await faceapi.nets.faceRecognitionNet.loadFromUri(MODELS_URL);
     faceModelsLoaded = true;
     return true;
   } catch(e) {
@@ -718,6 +773,7 @@ async function loadFaceModels() {
   }
 }
 
+// ===== FACE LOGIN =====
 async function initFaceLogin() {
   const loadingBar = document.getElementById('modelLoadingBar');
   const statusBar  = document.getElementById('faceStatusBar');
@@ -745,10 +801,10 @@ async function initFaceLogin() {
 
     videoWrap.style.display = 'block';
     statusBar.style.display = 'flex';
-    document.getElementById('faceStatusText').textContent = '👁️ กรุณากระพริบตา 1 ครั้ง เพื่อเริ่มสแกน';
-    document.getElementById('faceOverlayMsg').textContent = '👁️ กรุณากระพริบตา 1 ครั้ง';
+    document.getElementById('faceStatusText').textContent = 'กระพริบตาเพื่อเริ่มสแกน';
 
-    blinkDetected = false;
+    blinkCount = 0;
+    blinkReady = false;
     eyeWasClosed = false;
     startBlinkDetection();
   } catch(e) {
@@ -760,8 +816,7 @@ async function initFaceLogin() {
 function stopFaceLogin() {
   if (faceDetectionInterval) { clearInterval(faceDetectionInterval); faceDetectionInterval = null; }
   if (faceVideoStream) { faceVideoStream.getTracks().forEach(t => t.stop()); faceVideoStream = null; }
-  blinkDetected = false;
-  pendingFaceName = null;
+  blinkCount = 0; blinkReady = false; pendingFaceName = null;
 }
 
 function startBlinkDetection() {
@@ -779,16 +834,17 @@ function startBlinkDetection() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (!detections) {
-      document.getElementById('faceOverlayMsg').textContent = blinkDetected ? '✅ กำลังสแกน...' : '❌ ไม่พบใบหน้า';
+      document.getElementById('faceOverlayMsg').textContent = blinkReady ? '✅ กำลังสแกนใบหน้า...' : 'ไม่พบใบหน้า กรุณาหันหน้าเข้ากล้อง';
       return;
     }
 
-    ctx.strokeStyle = blinkDetected ? '#22c55e' : '#14b8a6';
+    // Draw face box
+    ctx.strokeStyle = blinkReady ? '#22c55e' : '#14b8a6';
     ctx.lineWidth = 2;
     const box = detections.detection.box;
     ctx.strokeRect(box.x, box.y, box.width, box.height);
 
-    if (!blinkDetected) {
+    if (!blinkReady) {
       const landmarks = detections.landmarks;
       const leftEye   = landmarks.getLeftEye();
       const rightEye  = landmarks.getRightEye();
@@ -801,14 +857,20 @@ function startBlinkDetection() {
         eyeWasClosed = true;
       } else if (avgEAR >= BLINK_THRESH && eyeWasClosed) {
         eyeWasClosed = false;
-        blinkDetected = true;
-        document.getElementById('faceStatusText').textContent = '✅ ตรวจจับการกระพริบแล้ว กำลังสแกน...';
+        blinkReady = true;
+        document.getElementById('faceStatusText').textContent = '✅ กำลังสแกนใบหน้า...';
         document.getElementById('faceOverlayMsg').textContent = '✅ กำลังสแกนใบหน้า...';
-        
-        clearInterval(faceDetectionInterval);
-        faceDetectionInterval = null;
-        await performFaceScan();
       }
+
+      if (!blinkReady) {
+        document.getElementById('faceOverlayMsg').textContent = 'กระพริบตาเพื่อเริ่มสแกน';
+      }
+    }
+
+    if (blinkReady) {
+      clearInterval(faceDetectionInterval);
+      faceDetectionInterval = null;
+      await performFaceScan();
     }
   }, 200);
 }
@@ -830,7 +892,7 @@ async function performFaceScan() {
   const detection = await faceapi.detectSingleFace(video, options).withFaceLandmarks(true).withFaceDescriptor();
 
   if (!detection) {
-    document.getElementById('faceOverlayMsg').textContent = '❌ ไม่พบใบหน้า ลองใหม่';
+    document.getElementById('faceOverlayMsg').textContent = '❌ ไม่พบใบหน้า กรุณาลองใหม่';
     document.getElementById('faceStatusText').textContent = '❌ ไม่พบใบหน้า';
     setTimeout(() => resetFaceScan(), 3000);
     return;
@@ -839,18 +901,32 @@ async function performFaceScan() {
   const embedding = Array.from(detection.descriptor);
   const embeddingJson = JSON.stringify(embedding);
 
-  const result = await callGAS('loginWithFace', { embedding: embeddingJson });
-  
-  if (result.success) {
-    pendingFaceName = result.name;
-    showFaceResultPopup(result.name);
-    playBeep();
-  } else {
-    const msg = result.message || 'ไม่พบผู้ใช้';
-    document.getElementById('faceOverlayMsg').textContent = '❌ ' + msg;
-    document.getElementById('faceStatusText').textContent = '❌ ' + msg;
+  try {
+    const result = await callGAS('loginWithFace', embeddingJson);
+    if (result.success) {
+      pendingFaceName = result.name;
+      showFaceResultPopup(result.name);
+      playBeep();
+    } else {
+      const msg = result.message || 'ไม่พบผู้ใช้';
+      document.getElementById('faceOverlayMsg').textContent = '❌ ' + msg;
+      document.getElementById('faceStatusText').textContent = '❌ ' + msg;
+      if (msg.includes('ลงทะเบียน') || msg.includes('ไม่พบผู้ใช้ที่ลงทะเบียน')) {
+        showNotRegisteredMsg();
+      } else {
+        setTimeout(() => resetFaceScan(), 3000);
+      }
+    }
+  } catch (e) {
+    document.getElementById('faceOverlayMsg').textContent = '❌ เกิดข้อผิดพลาด';
+    document.getElementById('faceStatusText').textContent = '❌ เกิดข้อผิดพลาด';
     setTimeout(() => resetFaceScan(), 3000);
   }
+}
+
+function showNotRegisteredMsg() {
+  document.getElementById('faceOverlayMsg').textContent = '❌ ไม่พบผู้ใช้ กรุณาลงทะเบียน';
+  document.getElementById('faceStatusText').textContent = '❌ ไม่พบผู้ใช้ในระบบ';
 }
 
 function showFaceResultPopup(name) {
@@ -869,10 +945,9 @@ function cancelFaceResult() {
 }
 
 function resetFaceScan() {
-  blinkDetected = false;
-  eyeWasClosed = false;
-  document.getElementById('faceStatusText').textContent = '👁️ กรุณากระพริบตา 1 ครั้ง';
-  document.getElementById('faceOverlayMsg').textContent = '👁️ กรุณากระพริบตา 1 ครั้ง';
+  blinkCount = 0; blinkReady = false; eyeWasClosed = false;
+  document.getElementById('faceStatusText').textContent = 'กระพริบตาเพื่อเริ่มสแกน';
+  document.getElementById('faceOverlayMsg').textContent = 'กระพริบตาเพื่อเริ่มสแกน';
   if (faceDetectionInterval) { clearInterval(faceDetectionInterval); faceDetectionInterval = null; }
   startBlinkDetection();
 }
@@ -901,6 +976,7 @@ function playBeep() {
   } catch(e) {}
 }
 
+// ===== REGISTRATION =====
 function openRegistration() {
   stopFaceLogin();
   resetRegState();
@@ -953,27 +1029,32 @@ async function verifyRegistration() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
 
-  const result = await callGAS('verifyForFaceRegistration', { idNumber: id, phone: phone });
-  
-  btn.disabled = false;
-  btn.textContent = '✅ ตรวจสอบข้อมูล';
-  
-  if (result.success) {
-    regUserRow  = result.row;
-    regUserName = result.name;
-    document.getElementById('regUserName').textContent  = result.name;
-    document.getElementById('regUserName3').textContent = result.name;
-    showRegStep(2);
+  try {
+    const result = await callGAS('verifyForFaceRegistration', id, phone);
+    btn.disabled = false;
+    btn.textContent = '✅ ตรวจสอบข้อมูล';
+    if (result.success) {
+      regUserRow  = result.row;
+      regUserName = result.name;
+      document.getElementById('regUserName').textContent  = result.name;
+      document.getElementById('regUserName3').textContent = result.name;
+      showRegStep(2);
 
-    if (result.hasEmbedding) {
-      document.getElementById('regAlreadyMsg').style.display = 'block';
-      document.getElementById('regProceedSection').style.display = 'none';
+      if (result.hasEmbedding) {
+        document.getElementById('regAlreadyMsg').style.display = 'block';
+        document.getElementById('regProceedSection').style.display = 'none';
+      } else {
+        document.getElementById('regAlreadyMsg').style.display = 'none';
+        document.getElementById('regProceedSection').style.display = 'block';
+      }
     } else {
-      document.getElementById('regAlreadyMsg').style.display = 'none';
-      document.getElementById('regProceedSection').style.display = 'block';
+      errEl.textContent = result.message || 'ไม่พบข้อมูล';
+      errEl.style.display = 'block';
     }
-  } else {
-    errEl.textContent = result.message || 'ไม่พบข้อมูล';
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = '✅ ตรวจสอบข้อมูล';
+    errEl.textContent = 'เกิดข้อผิดพลาด: ' + e;
     errEl.style.display = 'block';
   }
 }
@@ -1015,6 +1096,7 @@ async function captureRegPhoto() {
   ctx.scale(-1, 1);
   ctx.drawImage(video, 0, 0);
 
+  // Extract embedding
   const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.5 });
   const detection = await faceapi.detectSingleFace(canvas, options).withFaceLandmarks(true).withFaceDescriptor();
 
@@ -1031,6 +1113,7 @@ async function captureRegPhoto() {
   regPhotos[regPhotoIndex]    = dataUrl;
   regEmbeddings[regPhotoIndex] = JSON.stringify(embedding);
 
+  // Show preview
   const slot = document.getElementById('regSlot' + regPhotoIndex);
   slot.innerHTML = '<img src="' + dataUrl + '"><div class="slot-check">✓</div>';
   slot.classList.add('captured');
@@ -1052,22 +1135,22 @@ async function confirmRegistration() {
   showRegStep(4);
   stopRegCamera();
 
-  const result = await callGAS('saveFaceRegistration', {
-    row: regUserRow,
-    name: regUserName,
-    e1: regEmbeddings[0],
-    e2: regEmbeddings[1],
-    e3: regEmbeddings[2],
-    img1: regPhotos[0],
-    img2: regPhotos[1],
-    img3: regPhotos[2]
-  });
-  
-  if (result.success) {
-    showRegStep(5);
-  } else {
+  try {
+    const result = await callGAS('saveFaceRegistration',
+      regUserRow, regUserName,
+      regEmbeddings[0], regEmbeddings[1], regEmbeddings[2],
+      regPhotos[0], regPhotos[1], regPhotos[2]
+    );
+    if (result.success) {
+      showRegStep(5);
+    } else {
+      showRegStep(3);
+      document.getElementById('regError3').textContent = 'บันทึกไม่สำเร็จ: ' + (result.message || '');
+      document.getElementById('regError3').style.display = 'block';
+    }
+  } catch (e) {
     showRegStep(3);
-    document.getElementById('regError3').textContent = 'บันทึกไม่สำเร็จ: ' + (result.message || '');
+    document.getElementById('regError3').textContent = 'เกิดข้อผิดพลาด: ' + e;
     document.getElementById('regError3').style.display = 'block';
   }
 }
@@ -1076,6 +1159,7 @@ function goToFaceScanAfterReg() {
   closeRegistration();
 }
 
+// ===== STANDARD LOGIN =====
 async function doLogin() {
   const id    = document.getElementById('loginId').value.trim();
   const phone = document.getElementById('loginPhone').value.trim();
@@ -1092,18 +1176,23 @@ async function doLogin() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
 
-  const result = await callGAS('loginUser', { idNumber: id, phone: phone });
-  
-  btn.disabled = false;
-  btn.textContent = '🔐 เข้าสู่ระบบ';
-  
-  if (result.success) {
-    currentUser = result.name;
-    document.getElementById('topbarName').textContent = '👤 ' + result.name;
-    document.getElementById('topbarUser').style.display = 'flex';
-    loadHistory();
-  } else {
-    errEl.textContent = result.message || 'ข้อมูลไม่ถูกต้อง';
+  try {
+    const result = await callGAS('loginUser', id, phone);
+    btn.disabled = false;
+    btn.textContent = '🔐 เข้าสู่ระบบ';
+    if (result.success) {
+      currentUser = result.name;
+      document.getElementById('topbarName').textContent = '👤 ' + result.name;
+      document.getElementById('topbarUser').style.display = 'flex';
+      loadHistory();
+    } else {
+      errEl.textContent = result.message || 'ข้อมูลไม่ถูกต้อง';
+      errEl.style.display = 'block';
+    }
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = '🔐 เข้าสู่ระบบ';
+    errEl.textContent = 'เกิดข้อผิดพลาด: ' + e;
     errEl.style.display = 'block';
   }
 }
@@ -1126,21 +1215,22 @@ function logout() {
   showPage('pageLogin');
 }
 
+// ===== HISTORY =====
 async function loadHistory() {
   showPage('pageHistory');
   document.getElementById('historySubtitle').textContent = 'ของ ' + currentUser;
   showLoading('กำลังโหลดรายการรายงาน...');
 
-  const result = await callGAS('getUserReports', { userName: currentUser });
-  
-  hideLoading();
-  if (result.success && result.reports) {
-    renderHistory(result.reports);
-  } else {
+  try {
+    const reports = await callGAS('getUserReports', currentUser);
+    hideLoading();
+    renderHistory(reports);
+    if (!dropdownsLoaded) preloadDropdowns();
+  } catch (e) {
+    hideLoading();
     renderHistory([]);
-    document.getElementById('alertHistory').innerHTML = '<div class="alert error">เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + (result.message || '') + '</div>';
+    document.getElementById('alertHistory').innerHTML = '<div class="alert error">เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + e + '</div>';
   }
-  if (!dropdownsLoaded) preloadDropdowns();
 }
 
 function renderHistory(reports) {
@@ -1161,17 +1251,18 @@ function renderHistory(reports) {
 function goToHistory() { showPage('pageHistory'); }
 function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
+// ===== DROPDOWNS =====
 let ddData = { departments:[], positions:[], types:[], references:[] };
 async function preloadDropdowns() {
-  const deptResult = await callGAS('getDepartments', {});
-  if (deptResult.success) ddData.departments = deptResult.data || [];
-  const posResult = await callGAS('getDropdownOptions', { column: 'position' });
-  if (posResult.success) ddData.positions = posResult.data || [];
-  const typeResult = await callGAS('getDropdownOptions', { column: 'type' });
-  if (typeResult.success) ddData.types = typeResult.data || [];
-  const refResult = await callGAS('getDropdownOptions', { column: 'reference' });
-  if (refResult.success) ddData.references = refResult.data || [];
-  dropdownsLoaded = true;
+  try {
+    ddData.departments = await callGAS('getDepartments') || [];
+    ddData.positions = await callGAS('getDropdownOptions', 'position') || [];
+    ddData.types = await callGAS('getDropdownOptions', 'type') || [];
+    ddData.references = await callGAS('getDropdownOptions', 'reference') || [];
+    dropdownsLoaded = true;
+  } catch (e) {
+    console.error('preloadDropdowns error:', e);
+  }
 }
 
 function populateSelect(id, options, currentVal) {
@@ -1185,6 +1276,7 @@ function populateSelect(id, options, currentVal) {
   });
 }
 
+// ===== EDIT FORM =====
 async function openEditForm(rowIndex, reportNum) {
   currentRowIndex = rowIndex;
   currentReportNum = reportNum;
@@ -1192,14 +1284,14 @@ async function openEditForm(rowIndex, reportNum) {
   document.getElementById('alertEdit').innerHTML = '';
   showLoading('กำลังโหลดข้อมูลรายงาน...');
 
-  const result = await callGAS('getReportRowData', { rowIndex: rowIndex });
-  
-  hideLoading();
-  if (result.success) {
-    fillEditForm(result.data);
+  try {
+    const rowData = await callGAS('getReportRowData', rowIndex);
+    hideLoading();
+    fillEditForm(rowData);
     showPage('pageEdit');
-  } else {
-    alert('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + (result.message || ''));
+  } catch (e) {
+    hideLoading();
+    alert('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + e);
   }
 }
 
@@ -1248,24 +1340,19 @@ function setFileNote(id, url) {
   el.innerHTML = url ? '<span class="existing-file-note">📎 มีไฟล์เดิมอยู่ (จะใช้ไฟล์เดิมหากไม่อัปโหลดใหม่)</span>' : '';
 }
 
-function loadDropdownsForEdit(d) {
-  function setupDeptAndName() {
-    populateSelect('e_department', ddData.departments, d.department);
-    if (d.department) {
-      callGAS('getNamesByDepartment', { department: d.department }).then(result => {
-        if (result.success) populateSelect('e_reporterName', result.data || [], d.reporterName);
-      });
-    }
+async function loadDropdownsForEdit(d) {
+  if (ddData.departments.length === 0) await preloadDropdowns();
+  
+  populateSelect('e_department', ddData.departments, d.department);
+  if (d.department) {
+    try {
+      const names = await callGAS('getNamesByDepartment', d.department);
+      populateSelect('e_reporterName', names, d.reporterName);
+    } catch (e) {}
   }
-  function setupOthers() {
-    populateSelect('e_position', ddData.positions, d.position);
-    populateSelect('e_type', ddData.types, d.type);
-    populateSelect('e_reference', ddData.references, d.reference);
-  }
-  if (ddData.departments.length > 0) { setupDeptAndName(); setupOthers(); }
-  else {
-    preloadDropdowns().then(() => { setupDeptAndName(); setupOthers(); });
-  }
+  populateSelect('e_position', ddData.positions, d.position);
+  populateSelect('e_type', ddData.types, d.type);
+  populateSelect('e_reference', ddData.references, d.reference);
 }
 
 document.getElementById('e_department').addEventListener('change', async function() {
@@ -1273,8 +1360,12 @@ document.getElementById('e_department').addEventListener('change', async functio
   const sel = document.getElementById('e_reporterName');
   sel.innerHTML = '<option value="">กำลังโหลด...</option>';
   if (!dept) { sel.innerHTML = '<option value="">เลือกชื่อผู้รายงาน</option>'; return; }
-  const result = await callGAS('getNamesByDepartment', { department: dept });
-  if (result.success) populateSelect('e_reporterName', result.data || [], '');
+  try {
+    const names = await callGAS('getNamesByDepartment', dept);
+    populateSelect('e_reporterName', names, '');
+  } catch (e) {
+    sel.innerHTML = '<option value="">เกิดข้อผิดพลาด</option>';
+  }
 });
 
 document.getElementById('e_trainingStartDate').addEventListener('change', calcDays);
@@ -1327,6 +1418,7 @@ function countThaiChars(text) {
   });
 });
 
+// ===== SAVE EDIT =====
 async function saveEdit() {
   const required = [
     {id:'e_reportDate',label:'วันที่ทำรายงาน'},{id:'e_department',label:'กลุ่มสาระ'},
@@ -1390,14 +1482,20 @@ async function saveEdit() {
     if (input.files[0]) data.files[id.replace('e_','')] = await fileToBase64(input.files[0]);
   }
 
-  const result = await callGAS('saveEditedReport', { data: data, rowIndex: currentRowIndex });
-  
-  if (result.success) {
-    savedPdfLinks = { pdf1: result.pdfLink1, pdf2: result.pdfLink2 };
-    document.getElementById('resultReportNum').textContent = 'หมายเลขรายงาน: ' + result.reportNumber;
-    document.getElementById('resultModal').classList.add('active');
-  } else {
-    document.getElementById('alertEdit').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + (result.error || result.message) + '</div>';
+  try {
+    const result = await callGAS('saveEditedReport', data, currentRowIndex);
+    hideLoading();
+    if (result.success) {
+      savedPdfLinks = { pdf1: result.pdfLink1, pdf2: result.pdfLink2 };
+      document.getElementById('resultReportNum').textContent = 'หมายเลขรายงาน: ' + result.reportNumber;
+      document.getElementById('resultModal').classList.add('active');
+    } else {
+      document.getElementById('alertEdit').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + result.error + '</div>';
+      document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'});
+    }
+  } catch (e) {
+    hideLoading();
+    document.getElementById('alertEdit').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + e + '</div>';
     document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'});
   }
 }
@@ -1411,6 +1509,7 @@ function fileToBase64(file) {
   });
 }
 
+// ===== MODAL =====
 function openPDF(num) {
   const url = num === 1 ? savedPdfLinks.pdf1 : savedPdfLinks.pdf2;
   if (url) window.open(url, '_blank');
