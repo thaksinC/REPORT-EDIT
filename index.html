@@ -622,15 +622,16 @@
 // ==================== CONFIGURATION ====================
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
 
-// ==================== HELPER: CALL GAS (ใช้ JSONP แทน Fetch) ====================
+// ==================== HELPER: CALL GAS (JSONP - ไม่มี CORS) ====================
 function callGAS(action, data = {}) {
   return new Promise((resolve, reject) => {
     showLoading('กำลังดำเนินการ...');
     
-    const callbackName = 'callback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+    const callbackName = 'cb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
     const payload = JSON.stringify({ action: action, data: data });
     const encodedPayload = encodeURIComponent(payload);
     
+    // สร้างฟังก์ชัน callback
     window[callbackName] = function(result) {
       delete window[callbackName];
       document.body.removeChild(script);
@@ -638,6 +639,7 @@ function callGAS(action, data = {}) {
       resolve(result);
     };
     
+    // สร้าง script tag สำหรับ JSONP
     const script = document.createElement('script');
     script.src = GAS_URL + '?callback=' + callbackName + '&data=' + encodedPayload;
     script.onerror = function() {
