@@ -684,32 +684,24 @@
 // ===== CONFIGURATION =====
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
 
-// ===== JSONP CALLER (แก้ปัญหา CORS) =====
-function callGAS(action, ...args) {
-  return new Promise((resolve, reject) => {
-    const callbackName = 'jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-    const url = new URL(GAS_URL);
-    url.searchParams.set('action', action);
-    url.searchParams.set('args', JSON.stringify(args));
-    url.searchParams.set('callback', callbackName);
-    
-    const script = document.createElement('script');
-    script.src = url.toString();
-    
-    window[callbackName] = function(result) {
-      delete window[callbackName];
-      document.body.removeChild(script);
-      resolve(result);
-    };
-    
-    script.onerror = function() {
-      delete window[callbackName];
-      document.body.removeChild(script);
-      reject(new Error('เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว'));
-    };
-    
-    document.body.appendChild(script);
+// ===== GAS API CALLER =====
+async function callGAS(functionName, ...args) {
+  const url = new URL(GAS_URL);
+  url.searchParams.set('action', functionName);
+  
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    mode: 'cors',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ args: JSON.stringify(args) })
   });
+  
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(text);
+  }
 }
 
 // ===== STATE =====
@@ -846,6 +838,7 @@ function startBlinkDetection() {
       return;
     }
 
+    // Draw face box
     ctx.strokeStyle = blinkReady ? '#22c55e' : '#14b8a6';
     ctx.lineWidth = 2;
     const box = detections.detection.box;
@@ -1103,6 +1096,7 @@ async function captureRegPhoto() {
   ctx.scale(-1, 1);
   ctx.drawImage(video, 0, 0);
 
+  // Extract embedding
   const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.5 });
   const detection = await faceapi.detectSingleFace(canvas, options).withFaceLandmarks(true).withFaceDescriptor();
 
@@ -1119,6 +1113,7 @@ async function captureRegPhoto() {
   regPhotos[regPhotoIndex]    = dataUrl;
   regEmbeddings[regPhotoIndex] = JSON.stringify(embedding);
 
+  // Show preview
   const slot = document.getElementById('regSlot' + regPhotoIndex);
   slot.innerHTML = '<img src="' + dataUrl + '"><div class="slot-check">✓</div>';
   slot.classList.add('captured');
