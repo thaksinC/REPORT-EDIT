@@ -112,13 +112,6 @@
       border-radius: 10px; padding: 10px 16px; margin-bottom: 14px; font-size: 13px;
     }
     .face-status-text { color: var(--primary); font-weight: 600; }
-    .blink-indicators { display: flex; gap: 8px; align-items: center; }
-    .blink-dot {
-      width: 14px; height: 14px; border-radius: 50%;
-      background: #d1d5db; border: 2px solid #9ca3af;
-      transition: all 0.3s cubic-bezier(.4,0,.2,1);
-    }
-    .blink-dot.lit { background: #22c55e; border-color: #16a34a; box-shadow: 0 0 8px rgba(34,197,94,0.5); }
 
     .face-video-wrap {
       position: relative; border-radius: 14px; overflow: hidden;
@@ -541,11 +534,7 @@
         </div>
 
         <div class="face-status-bar" id="faceStatusBar" style="display:none;">
-          <span class="face-status-text" id="faceStatusText">กรุณากระพริบตา 2 ครั้ง</span>
-          <div class="blink-indicators">
-            <div class="blink-dot" id="blinkDot0"></div>
-            <div class="blink-dot" id="blinkDot1"></div>
-          </div>
+          <span class="face-status-text" id="faceStatusText">กรุณากระพริบตาเพื่อเริ่มสแกน</span>
         </div>
 
         <div class="face-result-popup-wrap" style="position:relative;">
@@ -553,7 +542,7 @@
             <video id="faceVideo" autoplay playsinline muted></video>
             <canvas id="faceCanvas"></canvas>
             <div class="face-scan-ring" id="faceScanRing"></div>
-            <div class="face-overlay-msg" id="faceOverlayMsg">กรุณากระพริบตา 2 ครั้งเพื่อยืนยันตัวตน</div>
+            <div class="face-overlay-msg" id="faceOverlayMsg">กรุณากระพริบตาเพื่อเริ่มสแกนตัวตน</div>
           </div>
           <div class="face-result-popup" id="faceResultPopup">
             <div style="font-size:40px;">👤</div>
@@ -593,7 +582,7 @@
           </tr>
         </thead>
         <tbody id="reportTableBody">
-          <tr><td colspan="5"><div class="empty-state"><span>⏳</span>กำลังโหลดข้อมูล...</div></td></tr>
+          <tr><td colspan="5"><div class="empty-state"><span>⏳</span>กำลังโหลดข้อมูล...</div></tr>
         </tbody>
       </table>
     </div>
@@ -690,56 +679,32 @@
     </div>
   </div>
 </div>
+
 <script>
-// เปลี่ยน URL นี้เป็น URL Web App ของคุณที่ได้จากการ Deploy
-const GAS_URL = "https://script.google.com/a/macros/sing.ac.th/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec";
+// ==================== CONFIGURATION ====================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec';
 
-// จำลอง google.script.run เพื่อให้โค้ดเดิมทำงานได้ 100%
-const google = {
-  script: {
-    run: {
-      withSuccessHandler: function(callback) {
-        this.onSuccess = callback;
-        return this;
-      },
-      withFailureHandler: function(callback) {
-        this.onFailure = callback;
-        return this;
-      },
-      // ฟังก์ชันดักจับการเรียกชื่อฟังก์ชันต่างๆ
-      // (ตัวอย่าง: .loginUser, .saveEditedReport)
-    }
+// ==================== HELPER: CALL GAS ====================
+async function callGAS(action, data = {}) {
+  showLoading('กำลังดำเนินการ...');
+  try {
+    const payload = { action: action, data: data };
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    hideLoading();
+    return result;
+  } catch (error) {
+    hideLoading();
+    console.error('callGAS error:', error);
+    return { success: false, message: 'เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว: ' + error.message };
   }
-};
+}
 
-// ใช้ Proxy เพื่อดักจับทุกชื่อฟังก์ชันที่เรียกผ่าน google.script.run
-google.script.run = new Proxy(google.script.run, {
-  get(target, prop) {
-    if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
-      return target[prop].bind(target);
-    }
-    
-    return async function(...args) {
-      try {
-        const response = await fetch(GAS_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            functionName: prop,
-            args: args
-          })
-        });
-        const res = await response.json();
-        if (res.success) {
-          if (target.onSuccess) target.onSuccess(res.data);
-        } else {
-          if (target.onFailure) target.onFailure(res.error);
-        }
-      } catch (e) {
-        if (target.onFailure) target.onFailure(e);
-      }
-    };
-  }
-});
 // ===== STATE =====
 let currentUser = null;
 let currentRowIndex = null;
@@ -752,8 +717,7 @@ let dropdownsLoaded = false;
 let faceVideoStream = null;
 let faceModelsLoaded = false;
 let faceDetectionInterval = null;
-let blinkCount = 0;
-let blinkReady = false;
+let blinkDetected = false;
 let pendingFaceName = null;
 let eyeWasClosed = false;
 const MODELS_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model/';
@@ -767,38 +731,7 @@ let regStream = null;
 let regPhotoIndex = 0;
 
 const PHOTO_GUIDES = ['กรุณาหันหน้าตรงแล้วกดถ่ายรูป', 'กรุณาหันซ้ายประมาณ 45° แล้วกดถ่ายรูป', 'กรุณาหันขวาประมาณ 45° แล้วกดถ่ายรูป'];
-// ===== โค้ดเชื่อมต่อ GitHub เข้ากับ GAS (วางเพิ่ม) =====
-const GAS_URL = "https://script.google.com/a/macros/sing.ac.th/s/AKfycbzhq5NGFw6c01-D6ebmJDC3prAD4wfseb7ArTVwkY0z4kq5AWSBqprY0LcZCdNhoTLfLw/exec";
 
-window.google = {
-  script: {
-    run: new Proxy({}, {
-      get(target, prop) {
-        if (prop === 'withSuccessHandler') {
-          return (cb) => { target.success = cb; return window.google.script.run; };
-        }
-        if (prop === 'withFailureHandler') {
-          return (cb) => { target.failure = cb; return window.google.script.run; };
-        }
-        return async (...args) => {
-          try {
-            const resp = await fetch(GAS_URL, {
-              method: "POST",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify({ functionName: prop, args: args })
-            });
-            const data = await resp.json();
-            if (target.success) target.success(data);
-          } catch (e) {
-            console.error("GAS Error:", e);
-            if (target.failure) target.failure(e);
-          }
-        };
-      }
-    })
-  }
-};
-// ===============================================
 // ===== UTILS =====
 function showLoading(msg) {
   document.getElementById('loadingText').textContent = msg || 'กำลังประมวลผล กรุณารอสักครู่...';
@@ -869,12 +802,11 @@ async function initFaceLogin() {
 
     videoWrap.style.display = 'block';
     statusBar.style.display = 'flex';
-    document.getElementById('faceStatusText').textContent = 'กรุณากระพริบตา 2 ครั้ง';
+    document.getElementById('faceStatusText').textContent = '👁️ กรุณากระพริบตา 1 ครั้ง เพื่อเริ่มสแกน';
+    document.getElementById('faceOverlayMsg').textContent = '👁️ กรุณากระพริบตา 1 ครั้ง';
 
-    blinkCount = 0;
-    blinkReady = false;
+    blinkDetected = false;
     eyeWasClosed = false;
-    resetBlinkDots();
     startBlinkDetection();
   } catch(e) {
     statusBar.style.display = 'flex';
@@ -885,16 +817,8 @@ async function initFaceLogin() {
 function stopFaceLogin() {
   if (faceDetectionInterval) { clearInterval(faceDetectionInterval); faceDetectionInterval = null; }
   if (faceVideoStream) { faceVideoStream.getTracks().forEach(t => t.stop()); faceVideoStream = null; }
-  blinkCount = 0; blinkReady = false; pendingFaceName = null;
-}
-
-function resetBlinkDots() {
-  document.getElementById('blinkDot0').classList.remove('lit');
-  document.getElementById('blinkDot1').classList.remove('lit');
-}
-
-function setBlinkDot(index) {
-  if (index < 2) document.getElementById('blinkDot' + index).classList.add('lit');
+  blinkDetected = false;
+  pendingFaceName = null;
 }
 
 function startBlinkDetection() {
@@ -912,17 +836,16 @@ function startBlinkDetection() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (!detections) {
-      document.getElementById('faceOverlayMsg').textContent = blinkReady ? '✅ กำลังสแกนใบหน้า...' : 'ไม่พบใบหน้า กรุณาหันหน้าเข้ากล้อง';
+      document.getElementById('faceOverlayMsg').textContent = blinkDetected ? '✅ กำลังสแกน...' : '❌ ไม่พบใบหน้า';
       return;
     }
 
-    // Draw face box
-    ctx.strokeStyle = blinkReady ? '#22c55e' : '#14b8a6';
+    ctx.strokeStyle = blinkDetected ? '#22c55e' : '#14b8a6';
     ctx.lineWidth = 2;
     const box = detections.detection.box;
     ctx.strokeRect(box.x, box.y, box.width, box.height);
 
-    if (!blinkReady) {
+    if (!blinkDetected) {
       const landmarks = detections.landmarks;
       const leftEye   = landmarks.getLeftEye();
       const rightEye  = landmarks.getRightEye();
@@ -935,30 +858,19 @@ function startBlinkDetection() {
         eyeWasClosed = true;
       } else if (avgEAR >= BLINK_THRESH && eyeWasClosed) {
         eyeWasClosed = false;
-        blinkCount++;
-        setBlinkDot(blinkCount - 1);
-        document.getElementById('faceStatusText').textContent = 'กระพริบแล้ว ' + blinkCount + '/2 ครั้ง';
-        if (blinkCount >= 2) {
-          blinkReady = true;
-          document.getElementById('faceStatusText').textContent = '✅ กำลังสแกนใบหน้า...';
-          document.getElementById('faceOverlayMsg').textContent = '✅ กำลังสแกนใบหน้า...';
-        }
+        blinkDetected = true;
+        document.getElementById('faceStatusText').textContent = '✅ ตรวจจับการกระพริบแล้ว กำลังสแกน...';
+        document.getElementById('faceOverlayMsg').textContent = '✅ กำลังสแกนใบหน้า...';
+        
+        clearInterval(faceDetectionInterval);
+        faceDetectionInterval = null;
+        await performFaceScan();
       }
-      document.getElementById('faceOverlayMsg').textContent = blinkCount < 2
-        ? 'กรุณากระพริบตา ' + (2 - blinkCount) + ' ครั้งอีก'
-        : '✅ กำลังสแกนใบหน้า...';
-    }
-
-    if (blinkReady) {
-      clearInterval(faceDetectionInterval);
-      faceDetectionInterval = null;
-      await performFaceScan();
     }
   }, 200);
 }
 
 function eyeAspectRatio(eye) {
-  // EAR = (|p2-p6| + |p3-p5|) / (2 * |p1-p4|)
   const dist = (a, b) => Math.sqrt((a.x-b.x)**2 + (a.y-b.y)**2);
   const A = dist(eye[1], eye[5]);
   const B = dist(eye[2], eye[4]);
@@ -975,7 +887,7 @@ async function performFaceScan() {
   const detection = await faceapi.detectSingleFace(video, options).withFaceLandmarks(true).withFaceDescriptor();
 
   if (!detection) {
-    document.getElementById('faceOverlayMsg').textContent = '❌ ไม่พบใบหน้า กรุณาลองใหม่';
+    document.getElementById('faceOverlayMsg').textContent = '❌ ไม่พบใบหน้า ลองใหม่';
     document.getElementById('faceStatusText').textContent = '❌ ไม่พบใบหน้า';
     setTimeout(() => resetFaceScan(), 3000);
     return;
@@ -984,34 +896,18 @@ async function performFaceScan() {
   const embedding = Array.from(detection.descriptor);
   const embeddingJson = JSON.stringify(embedding);
 
-  google.script.run
-    .withSuccessHandler(function(result) {
-      if (result.success) {
-        pendingFaceName = result.name;
-        showFaceResultPopup(result.name);
-        playBeep();
-      } else {
-        const msg = result.message || 'ไม่พบผู้ใช้';
-        document.getElementById('faceOverlayMsg').textContent = '❌ ' + msg;
-        document.getElementById('faceStatusText').textContent = '❌ ' + msg;
-        if (msg.includes('ลงทะเบียน') || msg.includes('ไม่พบผู้ใช้ที่ลงทะเบียน')) {
-          showNotRegisteredMsg();
-        } else {
-          setTimeout(() => resetFaceScan(), 3000);
-        }
-      }
-    })
-    .withFailureHandler(function(e) {
-      document.getElementById('faceOverlayMsg').textContent = '❌ เกิดข้อผิดพลาด';
-      document.getElementById('faceStatusText').textContent = '❌ เกิดข้อผิดพลาด';
-      setTimeout(() => resetFaceScan(), 3000);
-    })
-    .loginWithFace(embeddingJson);
-}
-
-function showNotRegisteredMsg() {
-  document.getElementById('faceOverlayMsg').textContent = '❌ ไม่พบผู้ใช้ กรุณาลงทะเบียน';
-  document.getElementById('faceStatusText').textContent = '❌ ไม่พบผู้ใช้ในระบบ';
+  const result = await callGAS('loginWithFace', { embedding: embeddingJson });
+  
+  if (result.success) {
+    pendingFaceName = result.name;
+    showFaceResultPopup(result.name);
+    playBeep();
+  } else {
+    const msg = result.message || 'ไม่พบผู้ใช้';
+    document.getElementById('faceOverlayMsg').textContent = '❌ ' + msg;
+    document.getElementById('faceStatusText').textContent = '❌ ' + msg;
+    setTimeout(() => resetFaceScan(), 3000);
+  }
 }
 
 function showFaceResultPopup(name) {
@@ -1030,10 +926,10 @@ function cancelFaceResult() {
 }
 
 function resetFaceScan() {
-  blinkCount = 0; blinkReady = false; eyeWasClosed = false;
-  resetBlinkDots();
-  document.getElementById('faceStatusText').textContent = 'กรุณากระพริบตา 2 ครั้ง';
-  document.getElementById('faceOverlayMsg').textContent = 'กรุณากระพริบตา 2 ครั้งเพื่อยืนยันตัวตน';
+  blinkDetected = false;
+  eyeWasClosed = false;
+  document.getElementById('faceStatusText').textContent = '👁️ กรุณากระพริบตา 1 ครั้ง';
+  document.getElementById('faceOverlayMsg').textContent = '👁️ กรุณากระพริบตา 1 ครั้ง';
   if (faceDetectionInterval) { clearInterval(faceDetectionInterval); faceDetectionInterval = null; }
   startBlinkDetection();
 }
@@ -1074,7 +970,6 @@ function closeRegistration() {
   document.getElementById('regBackdrop').classList.remove('active');
   stopRegCamera();
   resetRegState();
-  // Resume face scan if still on face panel
   if (document.getElementById('panel-face').classList.contains('active')) {
     initFaceLogin();
   }
@@ -1100,7 +995,7 @@ function showRegStep(n) {
   document.getElementById('regStep' + n).classList.add('active');
 }
 
-function verifyRegistration() {
+async function verifyRegistration() {
   const id = document.getElementById('regId').value.trim();
   const phone = document.getElementById('regPhone').value.trim();
   const errEl = document.getElementById('regError1');
@@ -1116,37 +1011,29 @@ function verifyRegistration() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
 
-  google.script.run
-    .withSuccessHandler(function(result) {
-      btn.disabled = false;
-      btn.textContent = '✅ ตรวจสอบข้อมูล';
-      if (result.success) {
-        regUserRow  = result.row;
-        regUserName = result.name;
-        document.getElementById('regUserName').textContent  = result.name;
-        document.getElementById('regUserName3').textContent = result.name;
-        showRegStep(2);
+  const result = await callGAS('verifyForFaceRegistration', { idNumber: id, phone: phone });
+  
+  btn.disabled = false;
+  btn.textContent = '✅ ตรวจสอบข้อมูล';
+  
+  if (result.success) {
+    regUserRow  = result.row;
+    regUserName = result.name;
+    document.getElementById('regUserName').textContent  = result.name;
+    document.getElementById('regUserName3').textContent = result.name;
+    showRegStep(2);
 
-        if (result.hasEmbedding) {
-          document.getElementById('regAlreadyMsg').style.display = 'block';
-          document.getElementById('regProceedSection').style.display = 'none';
-        } else {
-          document.getElementById('regAlreadyMsg').style.display = 'none';
-          document.getElementById('regProceedSection').style.display = 'block';
-        }
-      } else {
-        errEl.textContent = result.message || 'ไม่พบข้อมูล';
-        errEl.style.display = 'block';
-      }
-    })
-    .withFailureHandler(function(e) {
-      btn.disabled = false;
-      btn.textContent = '✅ ตรวจสอบข้อมูล';
-      const errEl = document.getElementById('regError1');
-      errEl.textContent = 'เกิดข้อผิดพลาด: ' + e;
-      errEl.style.display = 'block';
-    })
-    .verifyForFaceRegistration(id, phone);
+    if (result.hasEmbedding) {
+      document.getElementById('regAlreadyMsg').style.display = 'block';
+      document.getElementById('regProceedSection').style.display = 'none';
+    } else {
+      document.getElementById('regAlreadyMsg').style.display = 'none';
+      document.getElementById('regProceedSection').style.display = 'block';
+    }
+  } else {
+    errEl.textContent = result.message || 'ไม่พบข้อมูล';
+    errEl.style.display = 'block';
+  }
 }
 
 async function startRegistrationCamera() {
@@ -1186,7 +1073,6 @@ async function captureRegPhoto() {
   ctx.scale(-1, 1);
   ctx.drawImage(video, 0, 0);
 
-  // Extract embedding
   const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.5 });
   const detection = await faceapi.detectSingleFace(canvas, options).withFaceLandmarks(true).withFaceDescriptor();
 
@@ -1203,7 +1089,6 @@ async function captureRegPhoto() {
   regPhotos[regPhotoIndex]    = dataUrl;
   regEmbeddings[regPhotoIndex] = JSON.stringify(embedding);
 
-  // Show preview
   const slot = document.getElementById('regSlot' + regPhotoIndex);
   slot.innerHTML = '<img src="' + dataUrl + '"><div class="slot-check">✓</div>';
   slot.classList.add('captured');
@@ -1225,26 +1110,24 @@ async function confirmRegistration() {
   showRegStep(4);
   stopRegCamera();
 
-  google.script.run
-    .withSuccessHandler(function(result) {
-      if (result.success) {
-        showRegStep(5);
-      } else {
-        showRegStep(3);
-        document.getElementById('regError3').textContent = 'บันทึกไม่สำเร็จ: ' + (result.message || '');
-        document.getElementById('regError3').style.display = 'block';
-      }
-    })
-    .withFailureHandler(function(e) {
-      showRegStep(3);
-      document.getElementById('regError3').textContent = 'เกิดข้อผิดพลาด: ' + e;
-      document.getElementById('regError3').style.display = 'block';
-    })
-    .saveFaceRegistration(
-      regUserRow, regUserName,
-      regEmbeddings[0], regEmbeddings[1], regEmbeddings[2],
-      regPhotos[0], regPhotos[1], regPhotos[2]
-    );
+  const result = await callGAS('saveFaceRegistration', {
+    row: regUserRow,
+    name: regUserName,
+    e1: regEmbeddings[0],
+    e2: regEmbeddings[1],
+    e3: regEmbeddings[2],
+    img1: regPhotos[0],
+    img2: regPhotos[1],
+    img3: regPhotos[2]
+  });
+  
+  if (result.success) {
+    showRegStep(5);
+  } else {
+    showRegStep(3);
+    document.getElementById('regError3').textContent = 'บันทึกไม่สำเร็จ: ' + (result.message || '');
+    document.getElementById('regError3').style.display = 'block';
+  }
 }
 
 function goToFaceScanAfterReg() {
@@ -1252,7 +1135,7 @@ function goToFaceScanAfterReg() {
 }
 
 // ===== STANDARD LOGIN =====
-function doLogin() {
+async function doLogin() {
   const id    = document.getElementById('loginId').value.trim();
   const phone = document.getElementById('loginPhone').value.trim();
   const errEl = document.getElementById('loginError');
@@ -1268,27 +1151,20 @@ function doLogin() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> กำลังตรวจสอบ...';
 
-  google.script.run
-    .withSuccessHandler(function(result) {
-      btn.disabled = false;
-      btn.textContent = '🔐 เข้าสู่ระบบ';
-      if (result.success) {
-        currentUser = result.name;
-        document.getElementById('topbarName').textContent = '👤 ' + result.name;
-        document.getElementById('topbarUser').style.display = 'flex';
-        loadHistory();
-      } else {
-        errEl.textContent = result.message || 'ข้อมูลไม่ถูกต้อง';
-        errEl.style.display = 'block';
-      }
-    })
-    .withFailureHandler(function(e) {
-      btn.disabled = false;
-      btn.textContent = '🔐 เข้าสู่ระบบ';
-      errEl.textContent = 'เกิดข้อผิดพลาด: ' + e;
-      errEl.style.display = 'block';
-    })
-    .loginUser(id, phone);
+  const result = await callGAS('loginUser', { idNumber: id, phone: phone });
+  
+  btn.disabled = false;
+  btn.textContent = '🔐 เข้าสู่ระบบ';
+  
+  if (result.success) {
+    currentUser = result.name;
+    document.getElementById('topbarName').textContent = '👤 ' + result.name;
+    document.getElementById('topbarUser').style.display = 'flex';
+    loadHistory();
+  } else {
+    errEl.textContent = result.message || 'ข้อมูลไม่ถูกต้อง';
+    errEl.style.display = 'block';
+  }
 }
 
 document.getElementById('loginId').addEventListener('keypress', function(e) { if (e.key === 'Enter') doLogin(); });
@@ -1301,34 +1177,30 @@ function logout() {
   document.getElementById('loginId').value = '';
   document.getElementById('loginPhone').value = '';
   document.getElementById('loginError').style.display = 'none';
-  // reset face panel
   document.getElementById('faceVideoWrap').style.display = 'none';
   document.getElementById('faceStatusBar').style.display = 'none';
   document.getElementById('modelLoadingBar').style.display = 'block';
   document.getElementById('faceResultPopup').classList.remove('active');
-  // Switch to id tab
   switchLoginMode('id');
   showPage('pageLogin');
 }
 
 // ===== HISTORY =====
-function loadHistory() {
+async function loadHistory() {
   showPage('pageHistory');
   document.getElementById('historySubtitle').textContent = 'ของ ' + currentUser;
   showLoading('กำลังโหลดรายการรายงาน...');
 
-  google.script.run
-    .withSuccessHandler(function(reports) {
-      hideLoading();
-      renderHistory(reports);
-      if (!dropdownsLoaded) preloadDropdowns();
-    })
-    .withFailureHandler(function(e) {
-      hideLoading();
-      renderHistory([]);
-      document.getElementById('alertHistory').innerHTML = '<div class="alert error">เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + e + '</div>';
-    })
-    .getUserReports(currentUser);
+  const result = await callGAS('getUserReports', { userName: currentUser });
+  
+  hideLoading();
+  if (result.success) {
+    renderHistory(result.reports || []);
+  } else {
+    renderHistory([]);
+    document.getElementById('alertHistory').innerHTML = '<div class="alert error">เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + (result.message || '') + '</div>';
+  }
+  if (!dropdownsLoaded) preloadDropdowns();
 }
 
 function renderHistory(reports) {
@@ -1341,7 +1213,11 @@ function renderHistory(reports) {
   tbody.innerHTML = '';
   reports.forEach(function(r, i) {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td style="color:#aaa;font-size:13px;">${i+1}</td><td class="type-cell"><span class="type-tag">${escHtml(r.type||'-')}</span></td><td style="font-weight:500;">${escHtml(r.title||'-')}</td><td class="date-cell">${escHtml(r.dateStr||'-')}</td><td><button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${escHtml(r.reportNumber)}')">✏️ แก้ไขรายงาน</button></td>`;
+    tr.innerHTML = `<td style="color:#aaa;font-size:13px;">${i+1}</td>
+                    <td class="type-cell"><span class="type-tag">${escHtml(r.type||'-')}</span></td>
+                    <td style="font-weight:500;">${escHtml(r.title||'-')}</td>
+                    <td class="date-cell">${escHtml(r.dateStr||'-')}</td>
+                    <td><button class="btn-edit" onclick="openEditForm(${r.rowIndex},'${escHtml(r.reportNumber)}')">✏️ แก้ไขรายงาน</button></td>`;
     tbody.appendChild(tr);
   });
 }
@@ -1351,11 +1227,19 @@ function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'
 
 // ===== DROPDOWNS =====
 let ddData = { departments:[], positions:[], types:[], references:[] };
-function preloadDropdowns() {
-  google.script.run.withSuccessHandler(function(d){ ddData.departments=d; }).getDepartments();
-  google.script.run.withSuccessHandler(function(d){ ddData.positions=d; }).getDropdownOptions('position');
-  google.script.run.withSuccessHandler(function(d){ ddData.types=d; }).getDropdownOptions('type');
-  google.script.run.withSuccessHandler(function(d){ ddData.references=d; }).getDropdownOptions('reference');
+async function preloadDropdowns() {
+  const deptResult = await callGAS('getDepartments', {});
+  if (deptResult.success) ddData.departments = deptResult.data || [];
+  
+  const posResult = await callGAS('getDropdownOptions', { column: 'position' });
+  if (posResult.success) ddData.positions = posResult.data || [];
+  
+  const typeResult = await callGAS('getDropdownOptions', { column: 'type' });
+  if (typeResult.success) ddData.types = typeResult.data || [];
+  
+  const refResult = await callGAS('getDropdownOptions', { column: 'reference' });
+  if (refResult.success) ddData.references = refResult.data || [];
+  
   dropdownsLoaded = true;
 }
 
@@ -1371,24 +1255,22 @@ function populateSelect(id, options, currentVal) {
 }
 
 // ===== EDIT FORM =====
-function openEditForm(rowIndex, reportNum) {
+async function openEditForm(rowIndex, reportNum) {
   currentRowIndex = rowIndex;
   currentReportNum = reportNum;
   document.getElementById('editReportNumLabel').textContent = 'หมายเลขรายงาน: ' + reportNum;
   document.getElementById('alertEdit').innerHTML = '';
   showLoading('กำลังโหลดข้อมูลรายงาน...');
 
-  google.script.run
-    .withSuccessHandler(function(rowData) {
-      hideLoading();
-      fillEditForm(rowData);
-      showPage('pageEdit');
-    })
-    .withFailureHandler(function(e) {
-      hideLoading();
-      alert('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + e);
-    })
-    .getReportRowData(rowIndex);
+  const result = await callGAS('getReportRowData', { rowIndex: rowIndex });
+  
+  hideLoading();
+  if (result.success) {
+    fillEditForm(result.data);
+    showPage('pageEdit');
+  } else {
+    alert('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + (result.message || ''));
+  }
 }
 
 function fillEditForm(d) {
@@ -1440,7 +1322,9 @@ function loadDropdownsForEdit(d) {
   function setupDeptAndName() {
     populateSelect('e_department', ddData.departments, d.department);
     if (d.department) {
-      google.script.run.withSuccessHandler(function(names) { populateSelect('e_reporterName', names, d.reporterName); }).getNamesByDepartment(d.department);
+      callGAS('getNamesByDepartment', { department: d.department }).then(result => {
+        if (result.success) populateSelect('e_reporterName', result.data || [], d.reporterName);
+      });
     }
   }
   function setupOthers() {
@@ -1450,21 +1334,17 @@ function loadDropdownsForEdit(d) {
   }
   if (ddData.departments.length > 0) { setupDeptAndName(); setupOthers(); }
   else {
-    let loaded = 0;
-    function checkDone() { loaded++; if (loaded >= 4) { setupDeptAndName(); setupOthers(); } }
-    google.script.run.withSuccessHandler(function(d2){ ddData.departments=d2; checkDone(); }).getDepartments();
-    google.script.run.withSuccessHandler(function(d2){ ddData.positions=d2; checkDone(); }).getDropdownOptions('position');
-    google.script.run.withSuccessHandler(function(d2){ ddData.types=d2; checkDone(); }).getDropdownOptions('type');
-    google.script.run.withSuccessHandler(function(d2){ ddData.references=d2; checkDone(); }).getDropdownOptions('reference');
+    preloadDropdowns().then(() => { setupDeptAndName(); setupOthers(); });
   }
 }
 
-document.getElementById('e_department').addEventListener('change', function() {
+document.getElementById('e_department').addEventListener('change', async function() {
   const dept = this.value;
   const sel = document.getElementById('e_reporterName');
   sel.innerHTML = '<option value="">กำลังโหลด...</option>';
   if (!dept) { sel.innerHTML = '<option value="">เลือกชื่อผู้รายงาน</option>'; return; }
-  google.script.run.withSuccessHandler(function(names) { populateSelect('e_reporterName', names, ''); }).getNamesByDepartment(dept);
+  const result = await callGAS('getNamesByDepartment', { department: dept });
+  if (result.success) populateSelect('e_reporterName', result.data || [], '');
 });
 
 document.getElementById('e_trainingStartDate').addEventListener('change', calcDays);
@@ -1581,24 +1461,16 @@ async function saveEdit() {
     if (input.files[0]) data.files[id.replace('e_','')] = await fileToBase64(input.files[0]);
   }
 
-  google.script.run
-    .withSuccessHandler(function(result) {
-      hideLoading();
-      if (result.success) {
-        savedPdfLinks = { pdf1: result.pdfLink1, pdf2: result.pdfLink2 };
-        document.getElementById('resultReportNum').textContent = 'หมายเลขรายงาน: ' + result.reportNumber;
-        document.getElementById('resultModal').classList.add('active');
-      } else {
-        document.getElementById('alertEdit').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + result.error + '</div>';
-        document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'});
-      }
-    })
-    .withFailureHandler(function(e) {
-      hideLoading();
-      document.getElementById('alertEdit').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + e + '</div>';
-      document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'});
-    })
-    .saveEditedReport(data, currentRowIndex);
+  const result = await callGAS('saveEditedReport', { data: data, rowIndex: currentRowIndex });
+  
+  if (result.success) {
+    savedPdfLinks = { pdf1: result.pdfLink1, pdf2: result.pdfLink2 };
+    document.getElementById('resultReportNum').textContent = 'หมายเลขรายงาน: ' + result.reportNumber;
+    document.getElementById('resultModal').classList.add('active');
+  } else {
+    document.getElementById('alertEdit').innerHTML = '<div class="alert error">เกิดข้อผิดพลาด: ' + (result.error || result.message) + '</div>';
+    document.getElementById('alertEdit').scrollIntoView({behavior:'smooth'});
+  }
 }
 
 function fileToBase64(file) {
